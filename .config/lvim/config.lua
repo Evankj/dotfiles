@@ -64,18 +64,18 @@ lvim.builtin.nvimtree.setup.renderer.icons.show.git = true
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
-  "bash",
-  "c",
-  "javascript",
-  "json",
-  "lua",
-  "python",
-  "typescript",
-  "tsx",
-  "css",
-  "rust",
-  "java",
-  "yaml",
+    "bash",
+    "c",
+    "javascript",
+    "json",
+    "lua",
+    "python",
+    "typescript",
+    "tsx",
+    "css",
+    "rust",
+    "java",
+    "yaml",
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -165,14 +165,14 @@ lvim.builtin.treesitter.highlight.enable = true
 -- NOTE: Personal Config Below
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  -- { command = "flake8", filetypes = { "python" } },
-  {
-    -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
-    command = "shellcheck",
-    ---@usage arguments to pass to the formatter
-    -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
-    extra_args = { "--severity", "warning" },
-  },
+    -- { command = "flake8", filetypes = { "python" } },
+    {
+        -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+        command = "shellcheck",
+        ---@usage arguments to pass to the formatter
+        -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+        extra_args = { "--severity", "warning" },
+    },
 }
 
 vim.o.background = "dark" -- or "light" for light mode
@@ -182,6 +182,9 @@ vim.o.background = "dark" -- or "light" for light mode
 lvim.colorscheme = "gruvbox"
 
 
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 0
+vim.opt.shiftwidth = 2
 vim.opt.rnu = true
 -- vim.cmd([[colorscheme gruvbox]])
 -- vim.opt.guicursor = "i:ver100-iCursor"
@@ -196,6 +199,14 @@ vim.api.nvim_command([[
   nnoremap <leader>fh <cmd>Telescope help_tags<cr>
   nnoremap <leader>vv :vertical sb<space>
   nnoremap <leader>vh :sbuffer <space>
+
+
+  " Create section separator line with '-' characters
+  inoremap ---<CR> <ESC>o-<ESC>79i-<ESC><cmd>:lua require('Comment.api').toggle.linewise.current()<cr>
+
+  " inoremap --<CR> --<ESC><S-v>gc
+
+
 
   set guicursor=n-v-c:block-Cursor
   set guicursor+=i:ver100-iCursor
@@ -216,34 +227,34 @@ vim.api.nvim_command([[
 
 -- Additional Plugins
 lvim.plugins = {
-  { "ellisonleao/gruvbox.nvim" },
-  {"lunarvim/horizon.nvim"},
-  {"Luxed/ayu-vim"},
-  { "kdheepak/lazygit.nvim" },
-  { "vimwiki/vimwiki" },
-  -- {"wakatime/vim-wakatime"},
-  { "fitzterra/vimwiki-git" },
-  {"tools-life/taskwiki"},
+    { "ellisonleao/gruvbox.nvim" },
+    { "lunarvim/horizon.nvim" },
+    { "Luxed/ayu-vim" },
+    { "kdheepak/lazygit.nvim" },
+    { "vimwiki/vimwiki" },
+    { "wakatime/vim-wakatime" },
+    { "fitzterra/vimwiki-git" },
+    { "tools-life/taskwiki" },
 
-  {
-    "folke/todo-comments.nvim",
-    event = "BufRead",
-    config = function()
-      require("todo-comments").setup()
-    end,
-  },
-  { "ggandor/leap.nvim",
-    config = function() require('leap').set_default_keymaps() end },
-  { "vmchale/howdoi-vim" },
-  { "SirVer/ultisnips" },
-  { "mlaursen/vim-react-snippets"},
+    {
+        "folke/todo-comments.nvim",
+        event = "BufRead",
+        config = function()
+            require("todo-comments").setup()
+        end,
+    },
+    { "ggandor/leap.nvim",
+        config = function() require('leap').set_default_keymaps() end },
+    { "vmchale/howdoi-vim" },
+    { "SirVer/ultisnips" },
+    { "mlaursen/vim-react-snippets" },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = { "*.json", "*.jsonc" },
-  -- enable wrap mode for json files only
-  command = "setlocal wrap",
+    pattern = { "*.json", "*.jsonc" },
+    -- enable wrap mode for json files only
+    command = "setlocal wrap",
 })
 -- vim.api.nvim_create_autocmd("BufNewFile", {
 --   pattern = "~/vimwiki/diary/*.md",
@@ -251,10 +262,11 @@ vim.api.nvim_create_autocmd("BufEnter", {
 --   callback = function() require("silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'")
 --   end,
 -- })
+
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "zsh",
-  callback = function()
-    -- let treesitter use bash highlight for zsh files as well
-    require("nvim-treesitter.highlight").attach(0, "bash")
-  end,
+    pattern = "zsh",
+    callback = function()
+        -- let treesitter use bash highlight for zsh files as well
+        require("nvim-treesitter.highlight").attach(0, "bash")
+    end,
 })
