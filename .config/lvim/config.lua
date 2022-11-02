@@ -21,24 +21,24 @@ lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 -- we use protected-mode (pcall) just in case the plugin wasn't loaded yet.
--- local _, actions = pcall(require, "telescope.actions")
--- lvim.builtin.telescope.defaults.mappings = {
---   -- for input mode
---   i = {
---     ["<C-j>"] = actions.move_selection_next,
---     ["<C-k>"] = actions.move_selection_previous,
---     ["<C-n>"] = actions.cycle_history_next,
---     ["<C-p>"] = actions.cycle_history_prev,
---   },
---   -- for normal mode
---   n = {
---     ["<C-j>"] = actions.move_selection_next,
---     ["<C-k>"] = actions.move_selection_previous,
---   },
--- }
+local _, actions = pcall(require, "telescope.actions")
+lvim.builtin.telescope.defaults.mappings = {
+  -- for input mode
+  i = {
+    ["<C-j>"] = actions.move_selection_next,
+    ["<C-k>"] = actions.move_selection_previous,
+    ["<C-n>"] = actions.cycle_history_next,
+    ["<C-p>"] = actions.cycle_history_prev,
+  },
+  -- for normal mode
+  n = {
+    ["<C-j>"] = actions.move_selection_next,
+    ["<C-k>"] = actions.move_selection_previous,
+  },
+}
 
 -- Change theme settings
--- lvim.builtin.theme.options.dim_inactive = true
+lvim.builtin.theme.options.dim_inactive = true
 -- lvim.builtin.theme.options.style = "storm"
 
 -- Use which-key to add extra bindings with the leader-key prefix
@@ -57,25 +57,25 @@ lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.notify.active = true
+-- lvim.builtin.notify.active = false
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = true
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
-    "bash",
-    "c",
-    "javascript",
-    "json",
-    "lua",
-    "python",
-    "typescript",
-    "tsx",
-    "css",
-    "rust",
-    "java",
-    "yaml",
+  "bash",
+  "c",
+  "javascript",
+  "json",
+  "lua",
+  "python",
+  "typescript",
+  "tsx",
+  "css",
+  "rust",
+  "java",
+  "yaml",
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -88,13 +88,13 @@ lvim.builtin.treesitter.highlight.enable = true
 --     "sumneko_lua",
 --     "jsonls",
 -- }
--- -- change UI setting of `LspInstallInfo`
--- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
+-- change UI setting of `LspInstallInfo`
+-- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
 -- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
 -- lvim.lsp.installer.setup.ui.border = "rounded"
 -- lvim.lsp.installer.setup.ui.keymaps = {
---     uninstall_server = "d",
---     toggle_server_expand = "o",
+-- uninstall_server = "d",
+-- toggle_server_expand = "o",
 -- }
 
 -- ---@usage disable automatic installation of servers
@@ -165,14 +165,14 @@ lvim.builtin.treesitter.highlight.enable = true
 -- NOTE: Personal Config Below
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-    -- { command = "flake8", filetypes = { "python" } },
-    {
-        -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
-        command = "shellcheck",
-        ---@usage arguments to pass to the formatter
-        -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
-        extra_args = { "--severity", "warning" },
-    },
+  -- { command = "flake8", filetypes = { "python" } },
+  {
+    -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+    command = "shellcheck",
+    ---@usage arguments to pass to the formatter
+    -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+    extra_args = { "--severity", "warning" },
+  },
 }
 
 vim.o.background = "dark" -- or "light" for light mode
@@ -189,84 +189,155 @@ vim.opt.rnu = true
 -- vim.cmd([[colorscheme gruvbox]])
 -- vim.opt.guicursor = "i:ver100-iCursor"
 
+local dap = require('dap')
+dap.configurations.python = {
+  {
+    type = 'python';
+    request = 'launch';
+    name = "Launch file";
+    program = "${file}";
+    pythonPath = function()
+      return '/usr/bin/python'
+    end;
+  },
+}
 
 
 vim.api.nvim_command([[
-  nnoremap <Space>a <Cmd>lua vim.lsp.buf.code_action()<CR>
-  nnoremap <leader>ff <cmd>Telescope find_files<cr>
-  nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-  nnoremap <leader>fb <cmd>Telescope buffers<cr>
-  nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-  nnoremap <leader>vv :vertical sb<space>
-  nnoremap <leader>vh :sbuffer <space>
 
+  "Split teminal on right side
+  :set splitright
+  " send paragraph under curso to terminal
+  function! Exec_on_term(cmd)
+    if a:cmd=="normal"
+      exec "normal mk\"vyip"
+    else
+      exec "normal gv\"vy"
+    endif
+    if !exists("g:last_terminal_chan_id")
+      vs
+      terminal
+      let g:last_terminal_chan_id = b:terminal_job_id
+      wincmd p
+    endif
 
-  " Create section separator line with '-' characters
-  inoremap ---<CR> <ESC>o-<ESC>79i-<ESC><cmd>:lua require('Comment.api').toggle.linewise.current()<cr>
+    if getreg('"v') =~ "^\n"
+      call chansend(g:last_terminal_chan_id, expand("%:p")."\n")
+    else
+      call chansend(g:last_terminal_chan_id, @v)
+    endif
+    exec "normal `k"
+  endfunction
 
-  " inoremap --<CR> --<ESC><S-v>gc
-
-
-
-  set guicursor=n-v-c:block-Cursor
-  set guicursor+=i:ver100-iCursor
-  set guicursor+=n-v-c:blinkon0
-  set guicursor+=i:blinkwait10
-
-  set nocompatible
-  filetype plugin on
-  syntax on
-  let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
-  let g:vimwiki_global_ext = 0
-  au BufNewFile ~/vimwiki/diary/*.md :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
-
-  highlight Normal ctermbg=NONE guibg=NONE
-
+  nnoremap <F6> :call Exec_on_term("normal")<CR>
+  vnoremap <F6> :<c-u>call Exec_on_term("visual")<CR>
   ]])
 
 
+if vim.fn.isdirectory(vim.v.argv[2]) == 1 then
+  vim.api.nvim_set_current_dir(vim.v.argv[2])
+end
+
+-- Create section separator line with '-' characters
+lvim.keys.insert_mode["---<CR>"] = "<ESC>o-<ESC>79i-<ESC><cmd>:lua require('Comment.api').toggle.linewise.current()<cr>"
+
+lvim.builtin.which_key.mappings.f = nil
+lvim.keys.normal_mode["<leader>vv"] = ":vertical sb<space>"
+lvim.keys.normal_mode["<leader>vh"] = ":sbuffer <space>"
+
+lvim.keys.normal_mode["<leader>ff"] = "<cmd>Telescope find_files<cr>"
+lvim.keys.normal_mode["<leader>fg"] = "<cmd>Telescope live_grep<cr>"
+lvim.keys.normal_mode["<leader>fb"] = "<cmd>Telescope buffers<cr>"
+lvim.keys.normal_mode["<leader>fh"] = "<cmd>Telescope help_tags<cr>"
+
+lvim.keys.normal_mode["<leader>h"] = ":Telescope howdoi<cr>"
+
 -- Additional Plugins
 lvim.plugins = {
-    { "ellisonleao/gruvbox.nvim" },
-    { "lunarvim/horizon.nvim" },
-    { "Luxed/ayu-vim" },
-    { "kdheepak/lazygit.nvim" },
-    { "vimwiki/vimwiki" },
-    { "wakatime/vim-wakatime" },
-    { "fitzterra/vimwiki-git" },
-    { "tools-life/taskwiki" },
-
-    {
-        "folke/todo-comments.nvim",
-        event = "BufRead",
-        config = function()
-            require("todo-comments").setup()
-        end,
-    },
-    { "ggandor/leap.nvim",
-        config = function() require('leap').set_default_keymaps() end },
-    { "vmchale/howdoi-vim" },
-    { "SirVer/ultisnips" },
-    { "mlaursen/vim-react-snippets" },
+  { "ellisonleao/gruvbox.nvim" },
+  { "lunarvim/horizon.nvim" },
+  { "Luxed/ayu-vim" },
+  { "kdheepak/lazygit.nvim" },
+  {
+    'vimwiki/vimwiki',
+    config = function()
+      vim.g.vimwiki_list = {
+        {
+          path = '~/vimwiki/',
+          syntax = 'markdown',
+          ext = '.md',
+        }
+      }
+      vim.g.vimwiki_global_ext = 0
+    end
+  },
+  { "wakatime/vim-wakatime" },
+  { "fitzterra/vimwiki-git" },
+  { "tools-life/taskwiki" },
+  {
+    "folke/todo-comments.nvim",
+    event = "BufRead",
+    config = function()
+      require("todo-comments").setup()
+    end,
+  },
+  { "Zane-/howdoi.nvim" },
+  { "SirVer/ultisnips" },
+  { "mlaursen/vim-react-snippets" },
+  { "ggandor/leap.nvim",
+    config = function() require('leap').set_default_keymaps() end },
+  { "notjedi/nvim-rooter.lua",
+    config = function() require 'nvim-rooter'.setup() end
+  },
+  { "pantharshit00/vim-prisma" },
+  { "jparise/vim-graphql" },
 }
+
+require('telescope').load_extension('howdoi')
+-- require('telescope').setup({
+--   extensions = {
+--     howdoi = vim.tbl_deep_extend(
+--       'force',
+--       { num_answers = 3 },
+--       require('telescope.themes').get_dropdown())
+-- }})
+
+require("nvim-tree").setup({
+  update_cwd = true,
+  update_focused_file = {
+    enable = true,
+    update_cwd = true
+  },
+})
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 vim.api.nvim_create_autocmd("BufEnter", {
-    pattern = { "*.json", "*.jsonc" },
-    -- enable wrap mode for json files only
-    command = "setlocal wrap",
+  pattern = { "*.json", "*.jsonc" },
+  -- enable wrap mode for json files only
+  command = "setlocal wrap",
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "*" },
+  -- enable wrap mode for json files only
+  command = "Rooter",
 })
 -- vim.api.nvim_create_autocmd("BufNewFile", {
 --   pattern = "~/vimwiki/diary/*.md",
 --   -- enable wrap mode for json files only
---   callback = function() require("silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'")
+--   callback = function() require("r ! ~/.vim/bin/generate-vimwiki-diary-template '%'")
 --   end,
 -- })
 
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "zsh",
-    callback = function()
-        -- let treesitter use bash highlight for zsh files as well
-        require("nvim-treesitter.highlight").attach(0, "bash")
-    end,
+  pattern = "zsh",
+  callback = function()
+    -- let treesitter use bash highlight for zsh files as well
+    require("nvim-treesitter.highlight").attach(0, "bash")
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufNewFile", {
+  pattern = "~/vimwiki/diary/*.md",
+  command = "0r !~/.vim/bin/generate-vimwiki-diary-template '%'",
 })
